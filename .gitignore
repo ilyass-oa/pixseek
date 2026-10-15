@@ -1,0 +1,10 @@
+/build/
+/build-*/
+__pycache__/
+*.pyc
+*.o
+*.a
+.DS_Store
+.idea/
+.vscode/
+*.swp

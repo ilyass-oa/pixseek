@@ -1,0 +1,23 @@
+name: CI
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        build: [normal, sanitized]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Build and test
+        if: matrix.build == 'normal'
+        run: make -j2 test
+      - name: Build and test with sanitizers
+        if: matrix.build == 'sanitized'
+        env:
+          ASAN_OPTIONS: detect_leaks=1
+          UBSAN_OPTIONS: halt_on_error=1
+        run: make -j2 test CC=clang CXX=clang++ BUILD=build-sanitize SANITIZE=1
